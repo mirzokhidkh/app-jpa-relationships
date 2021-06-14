@@ -6,6 +6,7 @@ import uz.pdp.appjparelationships.entity.Subject;
 import uz.pdp.appjparelationships.repository.SubjectRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/subject")
@@ -32,5 +33,34 @@ public class SubjectController {
     }
 
 
+    @GetMapping("/{id}")
+    public Subject getOneSubject(@PathVariable Integer id) {
+        Optional<Subject> optionalSubject = subjectRepository.findById(id);
+        return optionalSubject.orElseGet(Subject::new);
+    }
 
+    @DeleteMapping("/{id}")
+    public String deleteSubject(@PathVariable Integer id){
+        Optional<Subject> optionalSubject = subjectRepository.findById(id);
+        if (optionalSubject.isPresent()){
+            subjectRepository.deleteById(id);
+            return "Subject is deleted";
+        }
+
+        return "subject is not found";
+    }
+
+    @PutMapping("/{id}")
+    public String editSubject(@PathVariable Integer id,@RequestBody Subject subject){
+        Optional<Subject> optionalSubject = subjectRepository.findById(id);
+
+        if (optionalSubject.isPresent()){
+            Subject editingSubject = optionalSubject.get();
+            editingSubject.setName(subject.getName());
+            subjectRepository.save(editingSubject);
+            return "Subject is edited";
+        }
+
+        return "subject is not found";
+    }
 }

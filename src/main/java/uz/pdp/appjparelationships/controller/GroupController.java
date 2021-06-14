@@ -38,6 +38,13 @@ public class GroupController {
         return allByFaculty_universityId;
     }
 
+    @GetMapping("/{id}")
+    public Group getOneGroup(@PathVariable Integer id) {
+        Optional<Group> optionalGroup = groupRepository.findById(id);
+        return optionalGroup.orElseGet(Group::new);
+    }
+
+
     @PostMapping
     public String addGroup(@RequestBody GroupDto groupDto) {
 
@@ -45,7 +52,7 @@ public class GroupController {
         group.setName(groupDto.getName());
 
         Optional<Faculty> optionalFaculty = facultyRepository.findById(groupDto.getFacultyId());
-        if (!optionalFaculty.isPresent()) {
+        if (optionalFaculty.isEmpty()) {
             return "Such faculty not found";
         }
 
@@ -54,6 +61,33 @@ public class GroupController {
         groupRepository.save(group);
         return "Group added";
     }
+
+    @DeleteMapping("/{id}")
+    public String deleteGroup(@PathVariable Integer id) {
+        Optional<Group> optionalGroup = groupRepository.findById(id);
+        if (optionalGroup.isPresent()) {
+            groupRepository.deleteById(id);
+            return "Group is deleted";
+        }
+        return "Group is not found";
+    }
+
+    @PutMapping("/{id}")
+    public String editGroup(@PathVariable Integer id, @RequestBody GroupDto groupDto) {
+        Optional<Group> optionalGroup = groupRepository.findById(id);
+
+        if (optionalGroup.isPresent()) {
+            Group editingGroup = optionalGroup.get();
+            editingGroup.setName(groupDto.getName());
+            Optional<Faculty> optionalFaculty = facultyRepository.findById(groupDto.getFacultyId());
+            editingGroup.setFaculty(optionalFaculty.get());
+            groupRepository.save(editingGroup);
+            return "Group is edited";
+        }
+
+        return "Group is not found";
+    }
+
 
 
 }

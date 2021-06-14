@@ -13,16 +13,16 @@ import javax.persistence.*;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;//1
+    private Integer id;
 
     @Column(nullable = false)
-    private String city;//Toshkent
+    private String city;
 
     @Column(nullable = false)
-    private String district;//Mirobod
+    private String district;
 
     @Column(nullable = false)
-    private String street;//U.Nosir ko'chasi
+    private String street;
 
 
 }
